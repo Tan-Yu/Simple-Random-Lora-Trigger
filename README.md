@@ -1,178 +1,162 @@
-# ComfyUI Random LoRA with Trigger Text Nodes
+# ComfyUI Random LoRA Chooser
 
-A ComfyUI custom node package that enables random LoRA selection with associated trigger text generation. Perfect for dynamic prompt enhancement and automated LoRA workflows.
+A dynamic LoRA selection system for ComfyUI that randomly chooses from configured LoRAs with trigger word support. Features a dynamic UI that shows only the number of slots you need, just like EasyUse nodes.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![ComfyUI](https://img.shields.io/badge/ComfyUI-Compatible-green.svg)
+## Features
 
-## 🌟 Features
+- **Dynamic UI**: Shows only the number of LoRA slots you specify (1-10 slots)
+- **Random Selection**: Multiple selection modes (random, weighted, all configured)
+- **Trigger Words**: Automatically outputs combined trigger words from selected LoRAs
+- **Auto Population**: Can automatically fill slots with random LoRAs
+- **Reproducible**: Seed-based selection for consistent results
+- **Stack Integration**: Works with existing LoRA stacks
 
-- **Random LoRA Selection**: Dynamically choose 1-10 LoRAs from your collection
-- **Trigger Text Integration**: Automatically concatenate associated trigger texts
-- **ComfyRoll Compatibility**: Full compatibility with ComfyRoll's LoRA stack system
-- **Easy Configuration**: UI-based LoRA configuration with the Config Manager node
-- **Advanced Controls**: Stride system, seed control, and force randomization
-- **Flexible Weights**: Individual model/clip weights per LoRA
+## Installation
 
-## 🚀 Quick Start
-
-### Installation
-
-#### Method 1: Git Clone (Recommended)
+1. Clone or download this repository to your ComfyUI custom nodes directory:
 ```bash
 cd ComfyUI/custom_nodes/
-git clone https://github.com/yourusername/ComfyUI-Random-LoRA-Trigger.git
+git clone <this-repo-url> comfyui-random-lora-chooser
 ```
 
-#### Method 2: Manual Download
-1. Download the repository as ZIP
-2. Extract to `ComfyUI/custom_nodes/ComfyUI-Random-LoRA-Trigger/`
+2. Restart ComfyUI
 
-#### Method 3: ComfyUI Manager
-```
-Install via ComfyUI Manager: Search for "Random LoRA Trigger"
-```
+3. The nodes will appear under `loaders/lora` category
 
-### Post-Installation
-1. Restart ComfyUI
-2. Find nodes under: **Custom → LoRA**
+## Nodes
 
-## 📋 Nodes Included
+### 🎯 Dynamic Random LoRA Chooser
 
-### 1. Random LoRA with Trigger
-Randomly selects LoRAs and outputs their concatenated trigger texts.
+The full-featured node with comprehensive options:
 
-**Inputs:**
-- `num_loras_to_select`: Number of LoRAs to randomly choose (1-10)
-- `exclusive_mode`: Ensure different selections each generation
-- `stride`: Generations before re-randomizing
-- `seed`: Random seed for reproducible results
-- `lora_stack`: Optional input LoRA stack
+**Key Parameters:**
+- `num_loras`: Number of LoRA slots to show (1-10)
+- `selection_mode`: How to choose LoRAs
+  - `random`: Random selection from configured slots
+  - `weighted`: Weighted selection based on weight values
+  - `all_configured`: Use all configured LoRAs
+- `min_random`/`max_random`: Range of how many LoRAs to select
+- `auto_populate`: Automatically fill empty slots with random LoRAs
+
+**Per-LoRA Settings:**
+- `lora_X_name`: LoRA file ("None", "Auto", or specific LoRA)
+- `lora_X_min_strength`/`lora_X_max_strength`: Strength range for random selection
+- `lora_X_weight`: Weight for weighted selection mode
+- `lora_X_trigger_words`: Comma-separated trigger words
 
 **Outputs:**
-- `LORA_STACK`: Compatible with ComfyRoll's LoRA system
-- `trigger_text`: Concatenated trigger texts
-- `show_help`: Status and selection information
+- `lora_stack`: LoRA stack compatible with other nodes
+- `trigger_words`: Combined trigger words from selected LoRAs
+- `chosen_loras_info`: List of selected LoRAs with strengths
+- `debug_info`: Selection information
 
-### 2. LoRA Config Manager
-Easy configuration interface for setting up LoRAs and their trigger texts.
+### ⚡ Simple Random LoRA Chooser
 
-**Inputs:**
-- `lora_name`: Select from available LoRAs
-- `trigger_text`: Associated prompt text
-- `model_weight`/`clip_weight`: LoRA strength settings
-- `enabled`: Enable/disable LoRA for selection
-- `action`: Update or remove configuration
+Simplified version with essential features only:
 
-## 🎯 Basic Usage
+**Key Parameters:**
+- `num_loras`: Number of LoRA slots (1-8)
+- `min_select`/`max_select`: How many LoRAs to randomly select
+- `min_strength`/`max_strength`: Global strength range
+- `auto_fill`: Auto-populate empty slots
 
-### Step 1: Configure Your LoRAs
-1. Add a **LoRA Config Manager** node
-2. Select a LoRA from the dropdown
-3. Enter the trigger text (e.g., "anime style, cel shading")
-4. Set weights and enable status
-5. Click "Update Config"
-6. Repeat for all your LoRAs
+**Per-LoRA Settings:**
+- `lora_X`: LoRA file selection
+- `triggers_X`: Trigger words for this LoRA
 
-### Step 2: Use Random Selection
-1. Add **Random LoRA with Trigger** node
-2. Set `num_loras_to_select` (how many to choose)
-3. Configure other parameters as needed
-4. Connect outputs to your workflow
+## How the Dynamic UI Works
 
-### Step 3: Connect to Workflow
+**🔥 NOW WITH TRUE DYNAMIC UI LIKE EASYUSE! 🔥**
+
+This implementation uses the same technique as EasyUse to create a truly dynamic interface:
+
+1. **Backend**: The node defines all possible slots (1-10) in Python
+2. **Frontend**: JavaScript extension dynamically shows/hides inputs based on `num_loras`
+3. **Smart processing**: The node only processes the visible/active slots
+
+**Dynamic Behavior:**
+- Set `num_loras = 3` → **Only see 3 LoRA input groups in the UI**
+- Set `num_loras = 7` → **UI expands to show 7 LoRA input groups**
+- Change `num_loras` → **UI instantly updates without restart**
+
+**Technical Implementation:**
+- **Frontend JavaScript** (`web/js/dynamic_lora_chooser.js`) handles UI visibility
+- **Backend Python** processes only the first `num_loras` slots
+- **Real-time updates** when you change the `num_loras` parameter
+- **Identical behavior** to EasyUse's dynamic LoRA stack
+
+## Usage Examples
+
+### Basic Random Selection
+
+1. Set `num_loras = 4` to show 4 LoRA slots
+2. Configure 2-3 LoRAs in the visible slots
+3. Set `selection_mode = "random"`
+4. Set `min_random = 1`, `max_random = 2`
+5. Add trigger words to each LoRA
+
+Result: Randomly selects 1-2 LoRAs from your configured options
+
+### Auto Population
+
+1. Set `num_loras = 5`
+2. Enable `auto_populate = "Random Fill"`
+3. Set strength ranges
+4. Leave LoRA slots empty or set to "Auto"
+
+Result: Automatically fills slots with random LoRAs from your collection
+
+### Weighted Selection
+
+1. Configure multiple LoRAs with different weights
+2. Set `selection_mode = "weighted"`
+3. LoRAs with higher weights are more likely to be selected
+
+### Integration with Workflows
+
+Connect the outputs to your loader:
+
 ```
-[Random LoRA with Trigger] → [Apply LoRA Stack] → [Model]
-          ↓
-[trigger_text] → [Text Concatenation] → [CLIP Text Encode]
+Random LoRA Chooser → EasyLoader
+├── lora_stack → optional_lora_stack
+├── trigger_words → Add to positive prompt
+└── chosen_loras_info → For logging/debugging
 ```
 
-## 📁 Configuration File
+## Tips
 
-The nodes automatically create `lora_trigger_config.json`:
+- **Reproducible Results**: Use the same seed value for consistent LoRA selection
+- **Trigger Words**: Use descriptive trigger words for each LoRA to improve generation quality
+- **Strength Ranges**: Set realistic strength ranges (0.5-1.0 is usually good)
+- **Testing**: Use debug_info output to see what was selected
+- **Performance**: Start with fewer slots and expand as needed
 
-```json
-{
-    "anime_style_v1.safetensors": {
-        "trigger_text": "anime style, cel shading",
-        "model_weight": 1.0,
-        "clip_weight": 1.0,
-        "enabled": true
-    },
-    "photorealistic_v2.safetensors": {
-        "trigger_text": "photorealistic, detailed skin texture",
-        "model_weight": 0.8,
-        "clip_weight": 0.8,
-        "enabled": true
-    }
-}
+## Project Structure
+
+```
+comfyui-random-lora-chooser/
+├── __init__.py                     # Package initialization
+├── README.md                       # This file
+├── pyproject.toml                  # Project configuration
+├── nodes/
+│   └── random_lora_chooser.py     # Main node implementation
+└── web/                           # Future: Custom frontend assets
 ```
 
-## 🔧 Advanced Features
+## Contributing
 
-### Stride System
-Prevents re-randomization on every generation:
-- `stride = 1`: Randomize every generation
-- `stride = 5`: Randomize every 5 generations
+Feel free to submit issues, feature requests, or pull requests to improve this node.
 
-### Force Randomization
-Ensures different selections when `stride` expires and multiple options are available.
+## License
 
-### Seed Control
-Use the same seed for reproducible LoRA selections across sessions.
+MIT License - Feel free to use and modify as needed.
 
-## 🤝 Compatibility
+## Changelog
 
-- **ComfyUI**: Latest version
-- **ComfyRoll Custom Nodes**: Full compatibility with LoRA stack system
-- **Python**: 3.8+
-
-## 📸 Examples
-
-See the `examples/` folder for:
-- Sample workflow JSON files
-- Configuration examples
-- Screenshots of node interfaces
-
-## 🐛 Troubleshooting
-
-### Nodes Don't Appear
-- Check directory structure: `custom_nodes/ComfyUI-Random-LoRA-Trigger/`
-- Restart ComfyUI completely
-- Check console for error messages
-
-### No LoRAs Available
-- Use LoRA Config Manager to add LoRAs
-- Verify LoRA files exist in `models/loras/`
-- Check LoRAs are enabled in configuration
-
-### Empty Trigger Text
-- Configure trigger texts using LoRA Config Manager
-- Verify `lora_trigger_config.json` exists and has correct format
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- ComfyUI team for the amazing framework
-- ComfyRoll developers for LoRA stack inspiration
-- Community feedback and contributions
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ComfyUI-Random-LoRA-Trigger/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ComfyUI-Random-LoRA-Trigger/discussions)
-
----
-
-⭐ **If this project helps you, please give it a star!** ⭐
+### v1.0.0
+- Initial release
+- Dynamic UI implementation
+- Random selection with multiple modes
+- Trigger word support
+- Auto population feature
+- Integration with LoRA stacks
