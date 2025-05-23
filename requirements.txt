@@ -1,0 +1,19 @@
+# ComfyUI Random LoRA with Trigger Text Nodes
+# Requirements file - most dependencies are provided by ComfyUI
+
+# Core ComfyUI (not installable via pip, manual install required)
+# ComfyUI >= 1.0.0
+
+# Python standard library modules used (included with Python)
+# - os
+# - sys  
+# - json
+# - random
+# - hashlib
+# - typing
+
+# Optional: Development dependencies
+# Uncomment if you plan to contribute to development
+# pytest>=7.0.0
+# black>=22.0.0
+# flake8>=4.0.0
