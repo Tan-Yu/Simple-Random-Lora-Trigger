@@ -156,3 +156,5 @@ Thumbs.db
 temp/
 output/
 input/
+
+*.json
