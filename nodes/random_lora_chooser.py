@@ -14,11 +14,11 @@ class RandomizeLoras:
                 "model": ("MODEL",),
                 "clip": ("CLIP", ),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
-                "min_random": ("INT", {"default": 1, "min": 1, "max": 20}),
-                "max_random": ("INT", {"default": 20, "min": 1, "max": 20}),
+                "min_random": ("INT", {"default": 1, "min": 1, "max": 50}),
+                "max_random": ("INT", {"default": 50, "min": 1, "max": 50}),
             }
         }
-        for i in range(1, 21):  # Changed from 11 to 21 for 20 LoRAs
+        for i in range(1, 51):  # Changed from 21 to 51 for 50 LoRAs
             inputs["required"][f"lora_{i}"] = (loras,)
             inputs["required"][f"min_str_{i}"] = ("FLOAT", {"default": 0.5, "min": -10.0, "max": 10.0, "step": 0.01})
             inputs["required"][f"max_str_{i}"] = ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01})
@@ -39,7 +39,7 @@ class RandomizeLoras:
         lora_configs = []
 
         # Dynamically extract lora configurations from kwargs
-        for i in range(1, 21):  # Changed from 11 to 21 for 20 LoRAs
+        for i in range(1, 51):  # Changed from 21 to 51 for 50 LoRAs
             lora_name = kwargs.get(f"lora_{i}")
             min_str = kwargs.get(f"min_str_{i}")
             max_str = kwargs.get(f"max_str_{i}")
@@ -103,11 +103,11 @@ class RandomizeLorasStack:
         inputs = {
             "required": {
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
-                "min_random": ("INT", {"default": 1, "min": 1, "max": 20}),
-                "max_random": ("INT", {"default": 20, "min": 1, "max": 20}),
+                "min_random": ("INT", {"default": 1, "min": 1, "max": 50}),
+                "max_random": ("INT", {"default": 50, "min": 1, "max": 50}),
             }
         }
-        for i in range(1, 21):  # Changed from 11 to 21 for 20 LoRAs
+        for i in range(1, 51):  # Changed from 21 to 51 for 50 LoRAs
             inputs["required"][f"lora_{i}"] = (loras,)
             inputs["required"][f"min_str_{i}"] = ("FLOAT", {"default": 0.5, "min": -10.0, "max": 10.0, "step": 0.01})
             inputs["required"][f"max_str_{i}"] = ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.01})
@@ -137,7 +137,7 @@ class RandomizeLorasStack:
             lora_list.extend([l for l in lora_stack if l[0] != "None"])
 
         # Dynamically extract lora configurations from kwargs
-        for i in range(1, 21):  # Changed from 11 to 21 for 20 LoRAs
+        for i in range(1, 51):  # Changed from 21 to 51 for 50 LoRAs
             lora_name = kwargs.get(f"lora_{i}")
             min_str = kwargs.get(f"min_str_{i}")
             max_str = kwargs.get(f"max_str_{i}")
@@ -195,7 +195,7 @@ class RandomizeLorasStack:
 class RandomLoraChooserAdvanced:
     @classmethod
     def INPUT_TYPES(cls):
-        max_lora_num = 20
+        max_lora_num = 50  # Changed from 20 to 50
         
         inputs = {
             "required": {
@@ -210,7 +210,7 @@ class RandomLoraChooserAdvanced:
         }
         
         # Add dynamic LoRA inputs
-        for i in range(1, max_lora_num + 1):
+        for i in range(1, max_lora_num + 1):  # Now goes to 51 (50 LoRAs)
             inputs["optional"][f"lora_{i}_name"] = (
                 ["None"] + folder_paths.get_filename_list("loras"), 
                 {"default": "None"}
